@@ -127,4 +127,4 @@ MIT
 ---
 
 **Author / Autor:**  
-[Upiši svoje ime ili
+Ivica Milić
