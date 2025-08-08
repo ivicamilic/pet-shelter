@@ -16,6 +16,8 @@ if (!$pet) {
     exit();
 }
 
+$health_checks = $db->fetchAll("SELECT * FROM health_checks WHERE pet_id = ? ORDER BY check_date DESC, id DESC", [$pet['id']]);
+
 include 'includes/header.php';
 ?>
 
@@ -107,9 +109,20 @@ include 'includes/header.php';
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Vaccinations</h5>
-                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
-                        Add Vaccination
-                    </button>
+                    <?php if (empty($pet['vaccinations'])): ?>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
+                            Add Vaccination
+                        </button>
+                    <?php else: ?>
+                        <a href="#" 
+                           class="btn btn-sm btn-warning"
+                           id="editVaccinationBtn"
+                           data-bs-toggle="modal"
+                           data-bs-target="#editVaccinationModal"
+                           data-vaccinations='<?php echo json_encode($pet['vaccinations']); ?>'>
+                           Edit Vaccination
+                        </a>
+                    <?php endif; ?>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($pet['vaccinations'])): ?>
@@ -143,39 +156,72 @@ include 'includes/header.php';
                 </div>
             </div>
             
-            <div class="card">
-                <div class="card-header">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Health Checks</h5>
+                    <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
+                        <?php if (empty($health_checks)): ?>
+                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addHealthCheckModal">
+                                Add Health Check
+                            </button>
+                        <?php else: ?>
+                            <button class="btn btn-sm btn-warning" id="editHealthCheckBtn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editHealthCheckModal"
+                                data-health-checks='<?php echo json_encode($health_checks); ?>'>
+                                Edit Health Check
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
                 <div class="card-body">
-                    <?php if (!empty($pet['health_checks'])): ?>
+                    <?php if (!empty($health_checks)): ?>
                         <div class="accordion" id="healthChecksAccordion">
-                            <?php foreach ($pet['health_checks'] as $index => $check): ?>
+                            <?php foreach ($health_checks as $index => $check): ?>
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="heading<?php echo $index; ?>">
                                         <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
-                                            <?php echo date('M j, Y', strtotime($check['check_date'])); ?> - 
-                                            <span class="ms-2 badge 
-                                                <?php 
-                                                switch($check['health_status']) {
-                                                    case 'excellent': echo 'bg-success'; break;
-                                                    case 'good': echo 'bg-primary'; break;
-                                                    case 'fair': echo 'bg-info'; break;
-                                                    case 'poor': echo 'bg-warning'; break;
-                                                    case 'critical': echo 'bg-danger'; break;
-                                                    default: echo 'bg-light text-dark';
-                                                }
-                                                ?>">
-                                                <?php echo ucfirst($check['health_status']); ?>
-                                            </span>
+                                            <?php echo isset($check['check_date']) && $check['check_date'] ? date('M j, Y', strtotime($check['check_date'])) : 'No date'; ?>
+                                            <?php if (isset($check['health_status'])): ?>
+                                                - <span class="ms-2 badge 
+                                                    <?php 
+                                                    switch($check['health_status']) {
+                                                        case 'excellent': echo 'bg-success'; break;
+                                                        case 'good': echo 'bg-primary'; break;
+                                                        case 'fair': echo 'bg-info'; break;
+                                                        case 'poor': echo 'bg-warning'; break;
+                                                        case 'critical': echo 'bg-danger'; break;
+                                                        default: echo 'bg-light text-dark';
+                                                    }
+                                                    ?>">
+                                                    <?php echo ucfirst($check['health_status']); ?>
+                                                </span>
+                                            <?php endif; ?>
                                         </button>
                                     </h2>
                                     <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" aria-labelledby="heading<?php echo $index; ?>" data-bs-parent="#healthChecksAccordion">
                                         <div class="accordion-body">
-                                            <p><strong>Veterinarian:</strong> <?php echo htmlspecialchars($check['veterinarian']); ?></p>
-                                            <p><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($check['diagnosis'] ?: 'N/A')); ?></p>
-                                            <p><strong>Treatment Plan:</strong> <?php echo nl2br(htmlspecialchars($check['treatment_plan'] ?: 'N/A')); ?></p>
-                                            <p><strong>Notes:</strong> <?php echo nl2br(htmlspecialchars($check['notes'] ?: 'N/A')); ?></p>
+                                            <?php if (!empty($check['veterinarian'])): ?>
+                                                <p><strong>Veterinarian:</strong> <?php echo htmlspecialchars($check['veterinarian']); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['diagnosis'])): ?>
+                                                <p><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($check['diagnosis'])); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['treatment_plan'])): ?>
+                                                <p><strong>Treatment Plan:</strong> <?php echo nl2br(htmlspecialchars($check['treatment_plan'])); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['clinical_exam'])): ?>
+                                                <p><strong>Clinical Exam:</strong> <?php echo nl2br(htmlspecialchars($check['clinical_exam'])); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['animal_statement'])): ?>
+                                                <p><strong>Animal Statement:</strong> <?php echo nl2br(htmlspecialchars($check['animal_statement'])); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['condition'])): ?>
+                                                <p><strong>Condition:</strong> <?php echo htmlspecialchars($check['condition']); ?></p>
+                                            <?php endif; ?>
+                                            <?php if (!empty($check['health_notes'])): ?>
+                                                <p><strong>Additional Notes:</strong> <?php echo nl2br(htmlspecialchars($check['health_notes'])); ?></p>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -244,5 +290,221 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Edit Vaccination Modal -->
+<div class="modal fade" id="editVaccinationModal" tabindex="-1" aria-labelledby="editVaccinationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="edit-vaccination.php">
+                <input type="hidden" name="pet_id" value="<?php echo $pet['id']; ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editVaccinationModalLabel">Edit Vaccination Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editVaccinationModalBody">
+                    <!-- Vaccination fields will be injected here by JS -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Health Check Modal -->
+<div class="modal fade" id="addHealthCheckModal" tabindex="-1" aria-labelledby="addHealthCheckModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="add-health-check.php">
+                <input type="hidden" name="pet_id" value="<?php echo $pet['id']; ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addHealthCheckModalLabel">Add Health Check</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Sva polja kao u add-health-check.php -->
+                    <div class="mb-3">
+                        <label for="check_date" class="form-label">Check Date</label>
+                        <input type="date" class="form-control" id="check_date" name="check_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="veterinarian" class="form-label">Veterinarian</label>
+                        <input type="text" class="form-control" id="veterinarian" name="veterinarian">
+                    </div>
+                    <div class="mb-3">
+                        <label for="health_status" class="form-label">Health Status</label>
+                        <select class="form-select" id="health_status" name="health_status" required>
+                            <option value="">Select status</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="diagnosis" class="form-label">Diagnosis</label>
+                        <textarea class="form-control" id="diagnosis" name="diagnosis"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="treatment_plan" class="form-label">Treatment Plan</label>
+                        <textarea class="form-control" id="treatment_plan" name="treatment_plan"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clinical_exam" class="form-label">Clinical Exam</label>
+                        <textarea class="form-control" id="clinical_exam" name="clinical_exam"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="animal_statement" class="form-label">Animal Statement</label>
+                        <textarea class="form-control" id="animal_statement" name="animal_statement"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="health_notes" class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="health_notes" name="health_notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save Health Check</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Health Check Modal -->
+<div class="modal fade" id="editHealthCheckModal" tabindex="-1" aria-labelledby="editHealthCheckModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="edit-health-check.php">
+                <input type="hidden" name="pet_id" value="<?php echo $pet['id']; ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editHealthCheckModalLabel">Edit Health Check</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editHealthCheckModalBody">
+                    <!-- Polja će biti ubačena JS-om -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.getElementById('editVaccinationBtn');
+    var modalBody = document.getElementById('editVaccinationModalBody');
+    if (editBtn) {
+        editBtn.addEventListener('click', function() {
+            var vaccinations = JSON.parse(this.getAttribute('data-vaccinations'));
+            var html = '';
+            vaccinations.forEach(function(vac, idx) {
+                html += `
+                <div class="border rounded p-3 mb-3">
+                    <input type="hidden" name="vaccination_id[${vac.id}]" value="${vac.id}">
+                    <div class="mb-3">
+                        <label class="form-label">Vaccine Type</label>
+                        <select class="form-select" name="vaccine_type[${vac.id}]">
+                            <option value="rabies" ${vac.vaccine_type === 'rabies' ? 'selected' : ''}>Rabies</option>
+                            <option value="distemper" ${vac.vaccine_type === 'distemper' ? 'selected' : ''}>Distemper</option>
+                            <option value="parvovirus" ${vac.vaccine_type === 'parvovirus' ? 'selected' : ''}>Parvovirus</option>
+                            <option value="other" ${vac.vaccine_type === 'other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vaccine Name</label>
+                        <input type="text" class="form-control" name="vaccine_name[${vac.id}]" value="${vac.vaccine_name ? vac.vaccine_name.replace(/"/g, '&quot;') : ''}">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Batch Number</label>
+                            <input type="text" class="form-control" name="batch_number[${vac.id}]" value="${vac.batch_number ? vac.batch_number.replace(/"/g, '&quot;') : ''}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Veterinarian</label>
+                            <input type="text" class="form-control" name="veterinarian[${vac.id}]" value="${vac.veterinarian ? vac.veterinarian.replace(/"/g, '&quot;') : ''}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Vaccination Date</label>
+                            <input type="date" class="form-control" name="vaccination_date[${vac.id}]" value="${vac.vaccination_date || ''}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" name="expiry_date[${vac.id}]" value="${vac.expiry_date || ''}">
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            modalBody.innerHTML = html;
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.getElementById('editHealthCheckBtn');
+    var modalBody = document.getElementById('editHealthCheckModalBody');
+    if (editBtn) {
+        editBtn.addEventListener('click', function() {
+            var checks = JSON.parse(this.getAttribute('data-health-checks'));
+            var html = '';
+            checks.forEach(function(check, idx) {
+                html += `
+                <div class="border rounded p-3 mb-3">
+                    <input type="hidden" name="health_check_id[${check.id}]" value="${check.id}">
+                    <div class="mb-3">
+                        <label class="form-label">Check Date</label>
+                        <input type="date" class="form-control" name="check_date[${check.id}]" value="${check.check_date || ''}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Veterinarian</label>
+                        <input type="text" class="form-control" name="veterinarian[${check.id}]" value="${check.veterinarian ? check.veterinarian.replace(/"/g, '&quot;') : ''}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Health Status</label>
+                        <select class="form-select" name="health_status[${check.id}]">
+                            <option value="excellent" ${check.health_status === 'excellent' ? 'selected' : ''}>Excellent</option>
+                            <option value="good" ${check.health_status === 'good' ? 'selected' : ''}>Good</option>
+                            <option value="fair" ${check.health_status === 'fair' ? 'selected' : ''}>Fair</option>
+                            <option value="poor" ${check.health_status === 'poor' ? 'selected' : ''}>Poor</option>
+                            <option value="critical" ${check.health_status === 'critical' ? 'selected' : ''}>Critical</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Diagnosis</label>
+                        <textarea class="form-control" name="diagnosis[${check.id}]">${check.diagnosis ? check.diagnosis.replace(/</g, '&lt;') : ''}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Treatment Plan</label>
+                        <textarea class="form-control" name="treatment_plan[${check.id}]">${check.treatment_plan ? check.treatment_plan.replace(/</g, '&lt;') : ''}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Clinical Exam</label>
+                        <textarea class="form-control" name="clinical_exam[${check.id}]">${check.clinical_exam ? check.clinical_exam.replace(/</g, '&lt;') : ''}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Animal Statement</label>
+                        <textarea class="form-control" name="animal_statement[${check.id}]">${check.animal_statement ? check.animal_statement.replace(/</g, '&lt;') : ''}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" name="health_notes[${check.id}]">${check.health_notes ? check.health_notes.replace(/</g, '&lt;') : ''}</textarea>
+                    </div>
+                </div>
+                `;
+            });
+            modalBody.innerHTML = html;
+        });
+    }
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>

@@ -65,6 +65,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    // Unos zdravstvenih pregleda
+    $db->query(
+        "INSERT INTO health_checks (pet_id, clinical_exam, animal_statement, condition, health_notes) VALUES (?, ?, ?, ?, ?)",
+        [
+            $pet_id,
+            $_POST['clinical_exam'],
+            $_POST['animal_statement'],
+            $_POST['condition'],
+            $_POST['health_notes']
+        ]
+    );
+    
     $_SESSION['message'] = "Pet added successfully!";
     header("Location: view-pet.php?id=$pet_id");
     exit();
@@ -195,6 +207,31 @@ include 'includes/header.php';
                     </div>
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="add-vaccination">Add Another Vaccination</button>
+            </div>
+        </div>
+        
+        <h4 class="mt-4">Health Check</h4>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="clinical_exam" class="form-label">Information on Clinical Examinations</label>
+                    <textarea class="form-control" id="clinical_exam" name="clinical_exam"><?php echo isset($_POST['clinical_exam']) ? htmlspecialchars($_POST['clinical_exam']) : ''; ?></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="animal_statement" class="form-label">Statement of the Animal</label>
+                    <textarea class="form-control" id="animal_statement" name="animal_statement"><?php echo isset($_POST['animal_statement']) ? htmlspecialchars($_POST['animal_statement']) : ''; ?></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="condition" class="form-label">Condition</label>
+                    <select class="form-select" id="condition" name="condition">
+                        <option value="good" <?php echo (isset($_POST['condition']) && $_POST['condition'] === 'good') ? 'selected' : ''; ?>>Good</option>
+                        <option value="not_good" <?php echo (isset($_POST['condition']) && $_POST['condition'] === 'not_good') ? 'selected' : ''; ?>>Not Good</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="health_notes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control" id="health_notes" name="health_notes"><?php echo isset($_POST['health_notes']) ? htmlspecialchars($_POST['health_notes']) : ''; ?></textarea>
+                </div>
             </div>
         </div>
         
