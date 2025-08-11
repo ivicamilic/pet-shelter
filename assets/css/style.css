@@ -2,10 +2,14 @@
 body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .container {
-    max-width: 1200px;
+    width: 100%; /* Povećanje na 90% širine roditelja */
+    max-width: 1200px; /* Maksimalna širina */
+    margin: 0 auto; /* Centriranje */
 }
 
 /* Navbar Styles */
@@ -88,6 +92,39 @@ body {
 
 .bg-danger {
     background-color: #dc3545 !important;
+}
+
+/* Table Pets Styles */
+.table-pets th, .table-pets td {
+    font-size: 0.85rem;
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table-pets th {
+    font-weight: 500;
+}
+
+.table-pets td {
+    max-width: 200px; /* povećano sa 120px */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-pets th:last-child,
+.table-pets td:last-child {
+    min-width: 120px;
+    max-width: 160px;
+    width: 15%;
+}
+
+/* Manji font za dugmad Pregled i Izmeni u tabeli ljubimaca */
+.table-pets .btn-info,
+.table-pets .btn-warning {
+    font-size: 0.75rem;
+    padding: 2px 10px;
 }
 
 /* Responsive Adjustments */

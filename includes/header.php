@@ -1,8 +1,20 @@
 <?php
 require_once 'config.php';
+//session_start();
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/../lang/' . $lang . '.php';
+
+// Jezički izbor (obrada promene jezika)
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['en', 'sr'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+    // Redirektuj na istu stranicu bez lang parametra
+    $url = strtok($_SERVER["REQUEST_URI"], '?');
+    header("Location: $url");
+    exit();
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo $lang; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +44,18 @@ require_once 'config.php';
                         </li>
                     <?php endif; ?>
                 </ul>
-                <ul class="navbar-nav">
+                <ul class="navbar-nav align-items-center">
+                    <!-- Language Switcher -->
+                    <li class="nav-item me-2">
+                        <a href="?lang=en" class="nav-link p-0 <?php echo $lang === 'en' ? 'border border-primary rounded' : ''; ?>" title="English">
+                            <img src="https://cdn.jsdelivr.net/gh/hjnilsson/country-flags/svg/gb.svg" alt="English" width="28" height="20">
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a href="?lang=sr" class="nav-link p-0 <?php echo $lang === 'sr' ? 'border border-primary rounded' : ''; ?>" title="Srpski">
+                            <img src="https://cdn.jsdelivr.net/gh/hjnilsson/country-flags/svg/rs.svg" alt="Srpski" width="28" height="20">
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>

@@ -3,6 +3,9 @@ require_once 'includes/config.php';
 require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/lang/' . $lang . '.php';
+
 redirectIfNotLoggedIn();
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -41,13 +44,13 @@ include 'includes/header.php';
         <div class="d-flex align-items-center">
             <form method="get" class="me-2">
                 <div class="d-flex align-items-center">
-                    <label for="limit" class="form-label me-2 mb-0">Show</label>
+                    <label for="limit" class="form-label me-2 mb-0"><?php echo $L['show'] ?? 'Show'; ?></label>
                     <select name="limit" id="limit" class="form-select me-2" style="width: 80px;" onchange="this.form.submit()">
                         <option value="10" <?php if($limit == 10) echo 'selected'; ?>>10</option>
                         <option value="25" <?php if($limit == 25) echo 'selected'; ?>>25</option>
                         <option value="50" <?php if($limit == 50) echo 'selected'; ?>>50</option>
                     </select>
-                    <span>rows</span>
+                    <span><?php echo $L['rows'] ?? 'rows'; ?></span>
                     <input type="hidden" name="page" value="<?php echo $page; ?>">
                     <?php if (isset($_GET['search'])): ?>
                         <input type="hidden" name="search" value="<?php echo htmlspecialchars($_GET['search']); ?>">
@@ -55,35 +58,34 @@ include 'includes/header.php';
                 </div>
             </form>
         </div>
-        <h2>All Pets</h2>
+        <h2><?php echo $L['all_pets'] ?? 'All Pets'; ?></h2>
         <div class="d-flex">
             <form method="get" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" placeholder="Search pets..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-outline-primary">Search</button>
+                <input type="text" name="search" class="form-control me-2" placeholder="<?php echo $L['search_pets'] ?? 'Search pets...'; ?>" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                <button type="submit" class="btn btn-outline-primary"><?php echo $L['search'] ?? 'Search'; ?></button>
                 <input type="hidden" name="limit" value="<?php echo $limit; ?>">
                 <input type="hidden" name="page" value="1">
             </form>
             <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
-                <a href="add-pet.php" class="btn btn-primary ms-2">Add New Pet</a>
+                <a href="add-pet.php" class="btn btn-primary ms-2"><?php echo $L['add_new_pet'] ?? 'Add New Pet'; ?></a>
             <?php endif; ?>
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-pets">
             <thead>
                 <tr>
-                    <th>Image</th>
-                    
-                    <th>Species</th>
-                    <th>Breed</th>
-                    <th>Name</th>
-                    <th>Sex</th>
-                    <th>Microchip #</th>
-                    <th>Status</th>
-                    <th>Presence in Shelter</th>
-                    <th>Incoming Date</th> <!-- NEW COLUMN -->
-                    <th>Actions</th>
+                    <th><?php echo $L['image'] ?? 'Image'; ?></th>
+                    <th><?php echo $L['species'] ?? 'Species'; ?></th>
+                    <th><?php echo $L['breed'] ?? 'Breed'; ?></th>
+                    <th><?php echo $L['name'] ?? 'Name'; ?></th>
+                    <th><?php echo $L['sex'] ?? 'Sex'; ?></th>
+                    <th><?php echo $L['microchip_number'] ?? 'Microchip #'; ?></th>
+                    <th><?php echo $L['status'] ?? 'Status'; ?></th>
+                    <th><?php echo $L['presence_in_shelter'] ?? 'Presence in Shelter'; ?></th>
+                    <th><?php echo $L['incoming_date'] ?? 'Incoming Date'; ?></th>
+                    <th><?php echo $L['actions'] ?? 'Actions'; ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -92,10 +94,10 @@ include 'includes/header.php';
                         <td>
                             <?php if (!empty($pet['image_path'])): ?>
                                 <a href="<?php echo htmlspecialchars($pet['image_path']); ?>" target="_blank">
-                                    <img src="<?php echo htmlspecialchars($pet['image_path']); ?>" alt="Pet Image" class="img-thumbnail" style="max-width: 60px; max-height: 60px;">
+                                    <img src="<?php echo htmlspecialchars($pet['image_path']); ?>" alt="<?php echo $L['image'] ?? 'Pet Image'; ?>" class="img-thumbnail" style="max-width: 60px; max-height: 60px;">
                                 </a>
                             <?php else: ?>
-                                <span class="text-muted">No image</span>
+                                <span class="text-muted"><?php echo $L['no_image_available'] ?? 'No image'; ?></span>
                             <?php endif; ?>
                         </td>
                         <td><?php echo ucfirst(htmlspecialchars($pet['species'])); ?></td>
@@ -114,21 +116,21 @@ include 'includes/header.php';
                                     default: echo 'bg-light text-dark';
                                 }
                                 ?>">
-                                <?php echo ucfirst($pet['status']); ?>
+                                <?php echo $L[$pet['status']] ?? ucfirst($pet['status']); ?>
                             </span>
                         </td>
                         <td>
-                            <?php echo $pet['in_shelter'] ? '<span class="text-success">Yes</span>' : '<span class="text-danger">No</span>'; ?>
+                            <?php echo $pet['in_shelter'] ? '<span class="text-success">' . ($L['yes'] ?? 'Yes') . '</span>' : '<span class="text-danger">' . ($L['no'] ?? 'No') . '</span>'; ?>
                         </td>
                         <td>
                             <?php echo !empty($pet['incoming_date']) 
                                 ? date('d.m.Y', strtotime($pet['incoming_date'])) 
-                                : '<span class="text-muted">N/A</span>'; ?>
+                                : '<span class="text-muted">' . ($L['not_available'] ?? 'N/A') . '</span>'; ?>
                         </td>
                         <td>
-                            <a href="view-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-info">View</a>
+                            <a href="view-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-info"><?php echo $L['view'] ?? 'View'; ?></a>
                             <?php if ($_SESSION['role'] !== 'Volunteer' && ($_SESSION['user_id'] == $pet['created_by'] || isAdmin())): ?>
-                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-warning"><?php echo $L['edit'] ?? 'Edit'; ?></a>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -141,7 +143,7 @@ include 'includes/header.php';
         <ul class="pagination justify-content-center mt-4">
             <?php if ($page > 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="?limit=<?php echo $limit; ?>&page=<?php echo $page - 1; ?>">Previous</a>
+                    <a class="page-link" href="?limit=<?php echo $limit; ?>&page=<?php echo $page - 1; ?>"><?php echo $L['previous'] ?? 'Previous'; ?></a>
                 </li>
             <?php endif; ?>
             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
@@ -151,7 +153,7 @@ include 'includes/header.php';
             <?php endfor; ?>
             <?php if ($page < $total_pages): ?>
                 <li class="page-item">
-                    <a class="page-link" href="?limit=<?php echo $limit; ?>&page=<?php echo $page + 1; ?>">Next</a>
+                    <a class="page-link" href="?limit=<?php echo $limit; ?>&page=<?php echo $page + 1; ?>"><?php echo $L['next'] ?? 'Next'; ?></a>
                 </li>
             <?php endif; ?>
         </ul>
