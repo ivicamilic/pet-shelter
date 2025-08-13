@@ -8,7 +8,7 @@ body {
 
 .container {
     width: 100%; /* Povećanje na 90% širine roditelja */
-    max-width: 1200px; /* Maksimalna širina */
+    max-width: 1400px; /* Maksimalna širina */
     margin: 0 auto; /* Centriranje */
 }
 
