@@ -3,6 +3,9 @@
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
 
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/lang/' . $lang . '.php';
+
 redirectIfNotLoggedIn();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pet_id'])) {

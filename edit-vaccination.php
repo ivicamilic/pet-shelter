@@ -2,6 +2,10 @@
 // filepath: c:\xampp\htdocs\pet-shelter\edit-vaccination.php
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
+require_once 'includes/functions.php';
+
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/lang/' . $lang . '.php';
 
 redirectIfNotLoggedIn();
 
