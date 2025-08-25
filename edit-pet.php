@@ -243,7 +243,8 @@ include 'includes/header.php';
             </div>
         </div>
         <hr>
-        <h4><?php echo $L['vaccinations'] ?? 'Vaccinations'; ?></h4>
+        <!-- VACCINATIONS -->
+        <h4>Vaccinations</h4>
         <?php foreach ($vaccinations as $vac): ?>
             <div class="border p-3 mb-3">
                 <input type="hidden" name="vaccination_id[<?php echo $vac['id']; ?>]" value="<?php echo $vac['id']; ?>">
@@ -283,7 +284,8 @@ include 'includes/header.php';
             </div>
         <?php endforeach; ?>
         <hr>
-        <h4><?php echo $L['health_checks'] ?? 'Health Checks'; ?></h4>
+        <!-- HEALTH CHECK -->
+        <h4>Health Check</h4>
         <div class="card mb-3">
             <div class="card-body">
                 <div class="mb-3">

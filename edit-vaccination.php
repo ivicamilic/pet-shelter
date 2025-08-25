@@ -6,6 +6,10 @@ require_once 'includes/functions.php';
 
 $lang = $_SESSION['lang'] ?? 'en';
 $L = require __DIR__ . '/lang/' . $lang . '.php';
+require_once 'includes/functions.php';
+
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/lang/' . $lang . '.php';
 
 redirectIfNotLoggedIn();
 

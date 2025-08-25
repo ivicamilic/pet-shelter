@@ -78,26 +78,22 @@ include 'includes/header.php';
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <strong><?php echo $L['species'] ?? 'Species'; ?>:</strong> <?php echo ucfirst(htmlspecialchars($L[$pet['species']] ?? $pet['species'])); ?>
+                        <strong>Species:</strong> <?php echo ucfirst(htmlspecialchars($pet['species'])); ?>
                     </li>
                     <li class="list-group-item">
                         <strong><?php echo $L['breed'] ?? 'Breed'; ?>:</strong> <?php echo htmlspecialchars($pet['breed']); ?>
                     </li>
                     <li class="list-group-item">
-                        <strong><?php echo $L['sex'] ?? 'Sex'; ?>:</strong> <?php echo ucfirst(htmlspecialchars($L[$pet['sex']] ?? $pet['sex'])); ?>
+                        <strong>Sex:</strong> <?php echo ucfirst(htmlspecialchars($pet['sex'])); ?>
                     </li>
                     <li class="list-group-item">
                         <strong><?php echo $L['date_of_birth'] ?? 'Date of Birth'; ?>:</strong> 
                         <?php echo !empty($pet['birth_date']) ? date('d.m.Y', strtotime($pet['birth_date'])) : '<span class="text-muted">' . ($L['not_available'] ?? 'N/A') . '</span>'; ?>                  </li>
                 </ul>
                 <div class="card-body">
-                    <!-- Edit: admin i staff -->
-                            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
-                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" 
-                                class="btn btn-sm btn-warning">
-                                <?php echo $L['edit'] ?? 'Edit'; ?>
-                                </a>
-                            <?php endif; ?>
+                    <?php if ($_SESSION['user_id'] == $pet['created_by'] || isAdmin()): ?>
+                        <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="card-link btn btn-warning">Edit</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -116,8 +112,7 @@ include 'includes/header.php';
             
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5><?php echo $L['vaccinations'] ?? 'Vaccinations'; ?></h5>
-                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                    <h5>Vaccinations</h5>
                     <?php if (empty($pet['vaccinations'])): ?>
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
                             <?php echo $L['add_vaccination'] ?? 'Add Vaccination'; ?>
@@ -131,7 +126,6 @@ include 'includes/header.php';
                            data-vaccinations='<?php echo json_encode($pet['vaccinations']); ?>'>
                            <?php echo $L['edit_vaccination'] ?? 'Edit Vaccination'; ?>
                         </a>
-                    <?php endif; ?>
                     <?php endif; ?>
                 </div>
                 <div class="card-body">
@@ -168,8 +162,8 @@ include 'includes/header.php';
             
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5><?php echo $L['health_checks'] ?? 'Health Checks'; ?></h5>
-                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                    <h5>Health Checks</h5>
+                    <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
                         <?php if (empty($health_checks)): ?>
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addHealthCheckModal">
                                 <?php echo $L['add_health_check'] ?? 'Add Health Check'; ?>
