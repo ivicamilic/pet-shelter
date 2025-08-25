@@ -63,6 +63,7 @@ return [
     'no_file_chosen' => 'Nije izabran nijedan fajl',
     'invalid_username_or_password' => 'Neispravno korisničko ime ili lozinka.',
     'error_fields_required' => 'Obavezna polja su korisničko ime i lozinka.',
+    'pets_report' => 'Izveštaj o ljubimcima',
 
     // Identification
     'identification' => 'Identifikacija',
@@ -171,4 +172,6 @@ return [
     'dont_have_account' => 'Nemate nalog?',
     'register_here' => 'Registrujte se ovde',
     'are_you_sure' => 'Da li ste sigurni?',
+    'export_xls' => 'Izvezi XLS',
+    'export_pdf' => 'Izvezi PDF',
 ];

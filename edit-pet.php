@@ -104,6 +104,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // NEW VACCINATION INSERT
+    if (!empty($_POST['new_vaccine_type'])) {
+        $db->query(
+            "INSERT INTO vaccinations 
+                (pet_id, vaccine_type, vaccine_name, batch_number, vaccination_date, expiry_date, veterinarian)
+             VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                $pet_id,
+                $_POST['new_vaccine_type'],
+                $_POST['new_vaccine_name'],
+                $_POST['new_batch_number'],
+                $_POST['new_vaccination_date'],
+                $_POST['new_expiry_date'],
+                $_POST['new_veterinarian']
+            ]
+        );
+    }
+
     // HEALTH CHECK UPDATE/INSERT
     $exists = $db->fetchOne("SELECT id FROM health_checks WHERE pet_id = ?", [$pet_id]);
     $fields = [
@@ -244,7 +262,7 @@ include 'includes/header.php';
         </div>
         <hr>
         <!-- VACCINATIONS -->
-        <h4>Vaccinations</h4>
+        <h4><?php echo $L['vaccinations'] ?? 'Vaccinations'; ?></h4>
         <?php foreach ($vaccinations as $vac): ?>
             <div class="border p-3 mb-3">
                 <input type="hidden" name="vaccination_id[<?php echo $vac['id']; ?>]" value="<?php echo $vac['id']; ?>">
@@ -283,9 +301,47 @@ include 'includes/header.php';
                 </div>
             </div>
         <?php endforeach; ?>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label"><?php echo $L['vaccine_type'] ?? 'Vaccine Type'; ?></label>
+                    <select class="form-select" name="new_vaccine_type">
+                        <option value=""><?php echo $L['select_vaccine_type'] ?? 'Select Vaccine Type'; ?></option>
+                        <option value="rabies"><?php echo $L['rabies'] ?? 'Rabies'; ?></option>
+                        <option value="distemper"><?php echo $L['distemper'] ?? 'Distemper'; ?></option>
+                        <option value="parvovirus"><?php echo $L['parvovirus'] ?? 'Parvovirus'; ?></option>
+                        <option value="other"><?php echo $L['other'] ?? 'Other'; ?></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><?php echo $L['vaccine_name'] ?? 'Vaccine Name'; ?></label>
+                    <input type="text" class="form-control" name="new_vaccine_name">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><?php echo $L['batch_number'] ?? 'Batch Number'; ?></label>
+                        <input type="text" class="form-control" name="new_batch_number">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><?php echo $L['veterinarian'] ?? 'Veterinarian'; ?></label>
+                        <input type="text" class="form-control" name="new_veterinarian">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><?php echo $L['vaccination_date'] ?? 'Vaccination Date'; ?></label>
+                        <input type="date" class="form-control" name="new_vaccination_date">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><?php echo $L['expiry_date'] ?? 'Expiry Date'; ?></label>
+                        <input type="date" class="form-control" name="new_expiry_date">
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr>
         <!-- HEALTH CHECK -->
-        <h4>Health Check</h4>
+        <h4><?php echo $L['health_checks'] ?? 'Health Checks'; ?></h4>
         <div class="card mb-3">
             <div class="card-body">
                 <div class="mb-3">

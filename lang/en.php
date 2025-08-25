@@ -63,6 +63,7 @@ return [
     'no_file_chosen' => 'No file chosen',
     'invalid_username_or_password' => 'Invalid username or password.',
     'error_fields_required' => 'Both username and password are required.',
+    'pets_report' => 'Pets Report',
 
     // Identification
     'identification' => 'Identification',
@@ -171,6 +172,6 @@ return [
     'dont_have_account' => 'Don\'t have an account?',
     'register_here' => 'Register here',
     'are_you_sure' => 'Are you sure?',
-
-   
+    'export_xls' => 'Export XLS',
+    'export_pdf' => 'Export PDF',
 ];

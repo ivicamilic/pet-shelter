@@ -78,13 +78,13 @@ include 'includes/header.php';
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <strong>Species:</strong> <?php echo ucfirst(htmlspecialchars($pet['species'])); ?>
+                        <strong><?php echo $L['species'] ?? 'Species'; ?>:</strong> <?php echo $L[$pet['species']] ?? ucfirst(htmlspecialchars($pet['species'])); ?>
                     </li>
                     <li class="list-group-item">
                         <strong><?php echo $L['breed'] ?? 'Breed'; ?>:</strong> <?php echo htmlspecialchars($pet['breed']); ?>
                     </li>
                     <li class="list-group-item">
-                        <strong>Sex:</strong> <?php echo ucfirst(htmlspecialchars($pet['sex'])); ?>
+                        <strong><?php echo $L['sex'] ?? 'Sex'; ?>:</strong> <?php echo $L[$pet['sex']] ?? ucfirst(htmlspecialchars($pet['sex'])); ?>
                     </li>
                     <li class="list-group-item">
                         <strong><?php echo $L['date_of_birth'] ?? 'Date of Birth'; ?>:</strong> 
@@ -92,7 +92,7 @@ include 'includes/header.php';
                 </ul>
                 <div class="card-body">
                     <?php if ($_SESSION['user_id'] == $pet['created_by'] || isAdmin()): ?>
-                        <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="card-link btn btn-warning">Edit</a>
+                        <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="card-link btn btn-warning"><?php echo $L['edit'] ?? 'Edit'; ?></a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -112,7 +112,7 @@ include 'includes/header.php';
             
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Vaccinations</h5>
+                    <h5><?php echo $L['vaccinations'] ?? 'Vaccinations'; ?></h5>
                     <?php if (empty($pet['vaccinations'])): ?>
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
                             <?php echo $L['add_vaccination'] ?? 'Add Vaccination'; ?>
@@ -162,7 +162,7 @@ include 'includes/header.php';
             
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Health Checks</h5>
+                    <h5><?php echo $L['health_checks'] ?? 'Health Checks'; ?></h5>
                     <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
                         <?php if (empty($health_checks)): ?>
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addHealthCheckModal">

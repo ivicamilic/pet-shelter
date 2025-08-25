@@ -61,13 +61,19 @@ include 'includes/header.php';
         <h2><?php echo $L['all_pets'] ?? 'All Pets'; ?></h2>
         <div class="d-flex">
             <form method="get" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" placeholder="<?php echo $L['search_pets'] ?? 'Search pets...'; ?>" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-outline-primary"><?php echo $L['search'] ?? 'Search'; ?></button>
+                <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="<?php echo $L['search_pets'] ?? 'Search pets...'; ?>" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" style="width: 200px;">
+                <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-search"></i> <?php echo $L['search'] ?? 'Search'; ?></button>
                 <input type="hidden" name="limit" value="<?php echo $limit; ?>">
                 <input type="hidden" name="page" value="1">
             </form>
+            <a href="export.php?format=xls<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-success btn-sm ms-2">
+                <i class="bi bi-file-earmark-excel"></i> <?php echo $L['export_xls'] ?? 'Export XLS'; ?>
+            </a>
+            <a href="export.php?format=pdf<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-danger btn-sm ms-2">
+                <i class="bi bi-file-earmark-pdf"></i> <?php echo $L['export_pdf'] ?? 'Export PDF'; ?>
+            </a>
             <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
-                <a href="add-pet.php" class="btn btn-primary pt-2 ms-2"><?php echo $L['add_new_pet'] ?? 'Add New Pet'; ?></a>
+                <a href="add-pet.php" class="btn btn-outline-primary btn-sm ms-2"><i class="bi bi-plus-circle"></i> <?php echo $L['add_new_pet'] ?? 'Add New Pet'; ?></a>
             <?php endif; ?>
         </div>
     </div>
@@ -128,33 +134,17 @@ include 'includes/header.php';
                                 : '<span class="text-muted">' . ($L['not_available'] ?? 'N/A') . '</span>'; ?>
                         </td>
                         <td>
-                            <!-- View: svi imaju pravo -->
-                            <a href="view-pet.php?id=<?php echo $pet['id']; ?>" 
-                            class="btn btn-sm btn-info">
-                            <?php echo $L['view'] ?? 'View'; ?>
-                            </a>
-
-                            <!-- Edit: admin i staff -->
-                            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
-                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" 
-                                class="btn btn-sm btn-warning">
-                                <?php echo $L['edit'] ?? 'Edit'; ?>
-                                </a>
-                            <?php endif; ?>
-
-                            <!-- Delete:
-                                - admin briše sve
-                                - staff briše samo svoje -->
-                            <?php if (
-                                ($_SESSION['role'] === 'admin') 
-                                || ($_SESSION['role'] === 'staff' && $_SESSION['user_id'] == $pet['created_by'])
-                            ): ?>
-                                <a href="delete-pet.php?id=<?php echo $pet['id']; ?>" 
-                                class="btn btn-sm btn-danger" 
-                                onclick="return confirm('<?php echo $L['are_you_sure'] ?? 'Are you sure?'; ?>')">
-                                <?php echo $L['delete'] ?? 'Delete'; ?>
-                                </a>
-                            <?php endif; ?>
+                            <div class="d-flex gap-1">
+                                <a href="view-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-info"><?php echo $L['view'] ?? 'View'; ?></a>
+                                <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                                    <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-warning"><?php echo $L['edit'] ?? 'Edit'; ?></a>
+                                <?php endif; ?>
+                                <?php if (($_SESSION['role'] === 'admin') || ($_SESSION['role'] === 'staff' && $_SESSION['user_id'] == $pet['created_by'])): ?>
+                                    <a href="delete-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('<?php echo $L['are_you_sure'] ?? 'Are you sure?'; ?>')">
+                                        <?php echo $L['delete'] ?? 'Delete'; ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>
