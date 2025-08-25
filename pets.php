@@ -3,7 +3,7 @@ require_once 'includes/config.php';
 require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
-$lang = $_SESSION['lang'] ?? 'en';
+$lang = $_SESSION['lang'] ?? 'sr';
 $L = require __DIR__ . '/lang/' . $lang . '.php';
 
 redirectIfNotLoggedIn();
@@ -45,7 +45,7 @@ include 'includes/header.php';
             <form method="get" class="me-2">
                 <div class="d-flex align-items-center">
                     <label for="limit" class="form-label me-2 mb-0"><?php echo $L['show'] ?? 'Show'; ?></label>
-                    <select name="limit" id="limit" class="form-select me-2" style="width: 80px;" onchange="this.form.submit()">
+                    <select name="limit" id="limit" class="form-select form-select-sm me-2" style="width:60px;" onchange="this.form.submit()">
                         <option value="10" <?php if($limit == 10) echo 'selected'; ?>>10</option>
                         <option value="25" <?php if($limit == 25) echo 'selected'; ?>>25</option>
                         <option value="50" <?php if($limit == 50) echo 'selected'; ?>>50</option>
@@ -66,8 +66,8 @@ include 'includes/header.php';
                 <input type="hidden" name="limit" value="<?php echo $limit; ?>">
                 <input type="hidden" name="page" value="1">
             </form>
-            <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
-                <a href="add-pet.php" class="btn btn-primary ms-2"><?php echo $L['add_new_pet'] ?? 'Add New Pet'; ?></a>
+            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                <a href="add-pet.php" class="btn btn-primary pt-2 ms-2"><?php echo $L['add_new_pet'] ?? 'Add New Pet'; ?></a>
             <?php endif; ?>
         </div>
     </div>
@@ -100,10 +100,10 @@ include 'includes/header.php';
                                 <span class="text-muted"><?php echo $L['no_image_available'] ?? 'No image'; ?></span>
                             <?php endif; ?>
                         </td>
-                        <td><?php echo ucfirst(htmlspecialchars($pet['species'])); ?></td>
+                        <td><?php echo htmlspecialchars(ucfirst($L[$pet['species']] ?? $pet['species'])); ?></td>
                         <td><?php echo htmlspecialchars($pet['breed']); ?></td>
                         <td><?php echo htmlspecialchars($pet['name']); ?></td>                        
-                        <td><?php echo ucfirst(htmlspecialchars($pet['sex'])); ?></td>
+                        <td><?php echo htmlspecialchars(ucfirst($L[$pet['sex']] ?? $pet['sex'])); ?></td>
                         <td><?php echo htmlspecialchars($pet['microchip_number']); ?></td>
                         <td>
                             <span class="badge 
@@ -128,9 +128,32 @@ include 'includes/header.php';
                                 : '<span class="text-muted">' . ($L['not_available'] ?? 'N/A') . '</span>'; ?>
                         </td>
                         <td>
-                            <a href="view-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-info"><?php echo $L['view'] ?? 'View'; ?></a>
-                            <?php if ($_SESSION['role'] !== 'Volunteer' && ($_SESSION['user_id'] == $pet['created_by'] || isAdmin())): ?>
-                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="btn btn-sm btn-warning"><?php echo $L['edit'] ?? 'Edit'; ?></a>
+                            <!-- View: svi imaju pravo -->
+                            <a href="view-pet.php?id=<?php echo $pet['id']; ?>" 
+                            class="btn btn-sm btn-info">
+                            <?php echo $L['view'] ?? 'View'; ?>
+                            </a>
+
+                            <!-- Edit: admin i staff -->
+                            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                                <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" 
+                                class="btn btn-sm btn-warning">
+                                <?php echo $L['edit'] ?? 'Edit'; ?>
+                                </a>
+                            <?php endif; ?>
+
+                            <!-- Delete:
+                                - admin briše sve
+                                - staff briše samo svoje -->
+                            <?php if (
+                                ($_SESSION['role'] === 'admin') 
+                                || ($_SESSION['role'] === 'staff' && $_SESSION['user_id'] == $pet['created_by'])
+                            ): ?>
+                                <a href="delete-pet.php?id=<?php echo $pet['id']; ?>" 
+                                class="btn btn-sm btn-danger" 
+                                onclick="return confirm('<?php echo $L['are_you_sure'] ?? 'Are you sure?'; ?>')">
+                                <?php echo $L['delete'] ?? 'Delete'; ?>
+                                </a>
                             <?php endif; ?>
                         </td>
                     </tr>

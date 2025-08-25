@@ -48,7 +48,7 @@ include 'includes/header.php';
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h4>Register</h4>
+                    <h4><?php echo $L['register'] ?? 'Register User'; ?></h4>
                 </div>
                 <div class="card-body">
                     <?php if (isset($error)): ?>
@@ -57,30 +57,30 @@ include 'includes/header.php';
                     
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label"><?php echo $L['username'] ?? 'Username'; ?></label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label"><?php echo $L['email'] ?? 'Email'; ?></label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                         <div class="mb-3">
-                            <label for="full_name" class="form-label">Full Name</label>
+                            <label for="full_name" class="form-label"><?php echo $L['full_name'] ?? 'Full Name'; ?></label>
                             <input type="text" class="form-control" id="full_name" name="full_name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label"><?php echo $L['password'] ?? 'Password'; ?></label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password_confirm" class="form-label">Confirm Password</label>
+                            <label for="password_confirm" class="form-label"><?php echo $L['password_confirm'] ?? 'Confirm Password'; ?></label>
                             <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="submit" class="btn btn-primary"><?php echo $L['register'] ?? 'Register'; ?></button>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    Already have an account? <a href="login.php">Login here</a>
+                    <?php echo $L['already_have_account'] ?? 'Already have an account?'; ?> <a href="login.php"><?php echo $L['login'] ?? 'Login'; ?></a>
                 </div>
             </div>
         </div>

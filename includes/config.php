@@ -16,6 +16,9 @@ function isLoggedIn() {
 function isAdmin() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }
+function isStaff() {
+    return isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'staff']);
+}
 
 function redirectIfNotLoggedIn() {
     if (!isLoggedIn()) {

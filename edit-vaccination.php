@@ -1,7 +1,11 @@
 <?php
-// filepath: c:\xampp\htdocs\pet-shelter\edit-vaccination.php
+
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
+require_once 'includes/functions.php';
+
+$lang = $_SESSION['lang'] ?? 'en';
+$L = require __DIR__ . '/lang/' . $lang . '.php';
 
 redirectIfNotLoggedIn();
 
@@ -40,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pet_id'])) {
         }
     }
 
-    $_SESSION['message'] = "Vaccination(s) updated successfully!";
+    $_SESSION['message'] = $L['vaccination_updated_successfully'] ??  "Vaccination(s) updated successfully!";
     header("Location: view-pet.php?id=$pet_id");
     exit();
 } else {

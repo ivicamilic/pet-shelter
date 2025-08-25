@@ -2,7 +2,7 @@
 
     <footer class="bg-dark text-white py-3 mt-4">
         <div class="container text-center">
-            <p class="mb-0">Pet Shelter Management System &copy; <?php echo date('Y'); ?></p>
+            <p class="mb-0"><?php echo $L['pet_shelter_management_system'] ?? 'Pet Shelter Management System'; ?> &copy; <?php echo date('Y'); ?></p>
         </div>
     </footer>
 
