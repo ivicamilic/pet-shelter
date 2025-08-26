@@ -91,7 +91,7 @@ include 'includes/header.php';
                         <?php echo !empty($pet['birth_date']) ? date('d.m.Y', strtotime($pet['birth_date'])) : '<span class="text-muted">' . ($L['not_available'] ?? 'N/A') . '</span>'; ?>                  </li>
                 </ul>
                 <div class="card-body">
-                    <?php if ($_SESSION['user_id'] == $pet['created_by'] || isAdmin()): ?>
+                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
                         <a href="edit-pet.php?id=<?php echo $pet['id']; ?>" class="card-link btn btn-warning"><?php echo $L['edit'] ?? 'Edit'; ?></a>
                     <?php endif; ?>
                 </div>
@@ -113,19 +113,21 @@ include 'includes/header.php';
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5><?php echo $L['vaccinations'] ?? 'Vaccinations'; ?></h5>
-                    <?php if (empty($pet['vaccinations'])): ?>
-                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
-                            <?php echo $L['add_vaccination'] ?? 'Add Vaccination'; ?>
-                        </button>
-                    <?php else: ?>
-                        <a href="#" 
-                           class="btn btn-sm btn-warning"
-                           id="editVaccinationBtn"
-                           data-bs-toggle="modal"
-                           data-bs-target="#editVaccinationModal"
-                           data-vaccinations='<?php echo json_encode($pet['vaccinations']); ?>'>
-                           <?php echo $L['edit_vaccination'] ?? 'Edit Vaccination'; ?>
-                        </a>
+                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+                        <?php if (empty($pet['vaccinations'])): ?>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addVaccinationModal">
+                                <?php echo $L['add_vaccination'] ?? 'Add Vaccination'; ?>
+                            </button>
+                        <?php else: ?>
+                            <a href="#" 
+                               class="btn btn-sm btn-warning"
+                               id="editVaccinationBtn"
+                               data-bs-toggle="modal"
+                               data-bs-target="#editVaccinationModal"
+                               data-vaccinations='<?php echo json_encode($pet['vaccinations']); ?>'>
+                               <?php echo $L['edit_vaccination'] ?? 'Edit Vaccination'; ?>
+                            </a>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
                 <div class="card-body">
@@ -163,7 +165,7 @@ include 'includes/header.php';
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5><?php echo $L['health_checks'] ?? 'Health Checks'; ?></h5>
-                    <?php if ($_SESSION['role'] !== 'Volunteer'): ?>
+                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
                         <?php if (empty($health_checks)): ?>
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addHealthCheckModal">
                                 <?php echo $L['add_health_check'] ?? 'Add Health Check'; ?>

@@ -7,6 +7,12 @@ require_once 'includes/functions.php';
 
 redirectIfNotLoggedIn();
 
+if ($_SESSION['role'] === 'Volunteer') {
+    $_SESSION['error'] = 'Access denied';
+    header('Location: pets.php');
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pet_id'])) {
     $pet_id = (int)$_POST['pet_id'];
     $check_date = $_POST['check_date'] ?? null;
