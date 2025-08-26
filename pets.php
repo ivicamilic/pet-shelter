@@ -24,7 +24,8 @@ $sql = "SELECT * FROM pets";
 $where = "";
 
 if ($search !== '') {
-    $where = " WHERE name LIKE ? OR breed LIKE ? OR microchip_number LIKE ? ";
+    $where = " WHERE name LIKE ? OR breed LIKE ? OR microchip_number LIKE ? OR DATE_FORMAT(incoming_date, '%d.%m.%Y') LIKE ? ";
+    $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
