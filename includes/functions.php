@@ -1,6 +1,9 @@
 <?php
 require_once 'db.php';
 
+// Ensure global $db is available
+global $db;
+
 function getAllPets($limit = 10) {
     global $db;
     return $db->fetchAll("SELECT * FROM pets ORDER BY id DESC LIMIT ?", [$limit]);

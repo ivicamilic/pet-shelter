@@ -27,7 +27,7 @@ $pet = getPetById($pet_id);
 
 if (
     !$pet ||
-    (!isAdmin() && !isStaff() && $pet['created_by'] != $_SESSION['user_id'])
+    (!isAdminOrStaff() && $pet['created_by'] != $_SESSION['user_id'])
 ) {
     header('Location: pets.php');
     exit();
